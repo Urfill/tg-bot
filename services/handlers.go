@@ -4,7 +4,6 @@ package services
 // fun обработки запроса от клиента
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 
@@ -16,19 +15,26 @@ func GetAnsw(c *gin.Context) {
 }
 
 func PostAnsw(c *gin.Context) {
-	const BotToken = "7574486002:AAElO_kif9X9jfx5uLhjMda7EJfyK9c54O4"
+	const BotToken = "7574486002:AAElO_kif9X9jfx5uLhjMda7EJfyK9c54O4" // токен в конфиги, зачем с большой буквы?
 
-	var json struct {
+	var json struct { // так не надо
 		ChatID int64  `json:"chat_id"`
 		Text   string `json:"text"`
 	}
 
-	if err := c.ShouldBindJSON(&json); err != nil {
+	//type Response struct {  нужно делать через type потом уносить в пакет models
+	//	ChatID int64  `json:"chat_id"`
+	//	Text   string `json:"text"`
+	//}
+
+	// var resp ... создаём структуру пустую
+
+	if err := c.ShouldBindJSON(&json); err != nil { // тут вместо json будет resp
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
 	}
 
-	sendMessageURL := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", BotToken)
+	sendMessageURL := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", BotToken) // не нужно отправлять всё в открытом виде. используй tg client пакет
 
 	resp, err := http.PostForm(sendMessageURL, url.Values{
 		"chat_id": {fmt.Sprintf("%d", json.ChatID)},
@@ -42,6 +48,6 @@ func PostAnsw(c *gin.Context) {
 
 	defer resp.Body.Close()
 
-	body, _ := io.ReadAll(resp.Body)
-	c.String(resp.StatusCode, string(body))
+	body, _ := c.GetRawData()               // почитать про библиотеку io. использовать c.GetRawData() вместо io.ReadAll (суть та же, но экономит строчки, можно внутри посмотреть, что оно делдает)
+	c.String(resp.StatusCode, string(body)) //
 }
