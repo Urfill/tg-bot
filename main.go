@@ -8,10 +8,8 @@ import (
 
 func main() {
 	r := gin.Default()
+	r.GET("/get", services.GetAnswer)
+	r.POST("/post", services.PostAnswer)
 
-	r.GET("/get", services.GetAnsw)
-
-	r.POST("/post", services.PostAnsw)
-
-	r.Run(":8080")
+	r.Run(":8080") // порт в конфиги
 }
