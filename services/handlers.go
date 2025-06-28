@@ -17,7 +17,7 @@ func GetAnsw(c *gin.Context) {
 func PostAnsw(c *gin.Context) {
 	const BotToken = "7574486002:AAElO_kif9X9jfx5uLhjMda7EJfyK9c54O4" // токен в конфиги, зачем с большой буквы?
 
-	var json struct {
+	var json struct { // так не надо
 		ChatID int64  `json:"chat_id"`
 		Text   string `json:"text"`
 	}
@@ -34,7 +34,7 @@ func PostAnsw(c *gin.Context) {
 		return
 	}
 
-	sendMessageURL := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", BotToken)
+	sendMessageURL := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", BotToken) // не нужно отправлять всё в открытом виде. используй tg client пакет
 
 	resp, err := http.PostForm(sendMessageURL, url.Values{
 		"chat_id": {fmt.Sprintf("%d", json.ChatID)},
