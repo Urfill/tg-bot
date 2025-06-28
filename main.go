@@ -13,5 +13,5 @@ func main() {
 
 	r.POST("/post", services.PostAnsw)
 
-	r.Run(":8080")
+	r.Run(":8080") // порт в конфиги
 }
