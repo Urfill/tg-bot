@@ -25,11 +25,15 @@ func (h *HttpClient) SendMsg(msg models.Msg) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	resp, err := h.client.Post(sendMessageURL, "text/json", bytes.NewBuffer(msgJson))
+	resp, err := h.client.Post(sendMessageURL, "application/json", bytes.NewBuffer(msgJson))
 	if err != nil {
 		return nil, err
 	}
 
-	defer resp.Body.Close()
-	return resp, nil
+	switch resp.StatusCode {
+	case http.StatusOK:
+		return resp, nil
+	default:
+		return nil, fmt.Errorf("failed to send msg, returned code: %d", resp.StatusCode)
+	}
 }

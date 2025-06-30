@@ -1,13 +1,13 @@
 package main
 
 import (
-	"tg-bot/services"
-
 	"github.com/gin-gonic/gin"
+	"tg-bot/services"
 )
 
 func main() {
 	r := gin.Default()
+	//r.GET("/get", clients.TgBotClient)
 	r.GET("/get", services.GetAnswer)
 	r.POST("/post", services.PostAnswer)
 

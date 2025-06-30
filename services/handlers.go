@@ -3,6 +3,7 @@ package services
 // 2.
 // fun обработки запроса от клиента
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
@@ -14,10 +15,14 @@ func GetAnswer(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"owner_id": "5635393648"})
 }
 
+//var msg Msg
+
 func PostAnswer(c *gin.Context) {
 	msg := models.Msg{}
-	if err := c.ShouldBindBodyWithJSON(msg); err != nil {
+
+	if err := c.ShouldBindBodyWithJSON(&msg); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "validation error"})
+		//fmt.Println(msg)
 		return
 	}
 
@@ -27,6 +32,8 @@ func PostAnswer(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to send message"})
 		return
 	}
+
+	fmt.Println(resp.Body)
 	defer resp.Body.Close()
 	respBody, _ := io.ReadAll(resp.Body)
 	c.String(resp.StatusCode, string(respBody)) //
